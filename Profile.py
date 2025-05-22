@@ -1,40 +1,61 @@
-from customtkinter import *
-from PIL import Image
+import customtkinter as ctk
 import os
+import json
 
-class Profile:
-    def __init__(self, Name, Age, Email):
-        self.name = Name
-        self.age = Age
-        self.email = Email
-
-    def Get_info(self):
-        return (self.name, self.age, self.email)
-
-
-
-
-app = CTk()
+app = ctk.CTk()
 app.geometry("1280x720")
 app.title("Event Ticketing System")
 
+data_path = "profile_data.json"
 
-name = input("Enter name: ")
-age = input("Enter age: ")
-email = input("Enter email: ")
+def load_profile():
+    if os.path.exists(data_path):
+        with open(data_path, "r") as file:
+            return json.load(file)
+    return {"name": "", "age": "", "email": ""}
 
-user_profile = Profile(Name=name, Age=age, Email=email)
-
-
-desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "blank.png")
-profile_img = CTkImage(light_image=Image.open(desktop_path), size=(60, 60))
-
-
-CTkEntry(master=app, text_color="#4a6eff", placeholder_text="Enter event name", width=300)
+def save_profile(data):
+    with open(data_path, "w") as f:
+        json.dump(data, f)
 
 
-profile_button = CTkButton(master=app, image=profile_img, width=60, height=60, corner_radius=100, fg_color="white", border_width=2, border_color="white")
+user_profile = load_profile()
 
+def open_profile_window():
+    win = ctk.CTkToplevel(app)
+    win.geometry("400x300")
+    win.title("Profile")
+
+    ctk.CTkLabel(win, text="Name:").pack(pady=(10, 0))
+    name_entry = ctk.CTkEntry(win)
+    name_entry.insert(0, user_profile.get("name", ""))
+    name_entry.pack()
+
+    ctk.CTkLabel(win, text="Age:").pack(pady=(10, 0))
+    age_entry = ctk.CTkEntry(win)
+    age_entry.insert(0, user_profile.get("age", ""))
+    age_entry.pack()
+
+    
+    ctk.CTkLabel(win, text="Email:").pack(pady=(10, 0))
+    email_entry = ctk.CTkEntry(win)
+    email_entry.insert(0, user_profile.get("email", ""))
+    email_entry.pack()
+
+  
+    def save_and_close():
+        new_data = {
+        "name": name_entry.get(),
+        "age" : age_entry.get(),
+        "email" : email_entry.get()
+        }
+        save_profile(new_data)
+        win.destroy()
+
+    ctk.CTkButton(win, text="Save", command=save_and_close).pack(pady=20)
+
+
+profile_button = ctk.CTkButton(master=app, text="Profile", command=open_profile_window)
 profile_button.place(x=60, y=50)
 
 app.mainloop()
