@@ -1,10 +1,13 @@
-class Event():
+from customtkinter import *
+import tkinter as tk
+
+class Event:
 
     
-    def __init__(self, Location, Time, Name):
+    def __init__(self, Name, Location, Time):
+        self.Name = Name
         self.Location = Location
         self.Time = Time
-        self.Name = Name
         self.UserList = []
         print("Event System Started")
         print("Added Event " + self.Name + ", at location: " + self.Location + ", at " + self.Time)
@@ -15,12 +18,19 @@ class Event():
             print("Added user: " + user + " to event: " + self.Name)
             print(self.UserList)
 
-event1 = Event("Cairo", "11pm", "Kairokee")
+    def showEvent(self):
+        app = CTk()
+        app.geometry("1280x720")
+        app.title("Event Ticketing System")
+        eventFrame = CTkFrame(width=1280, height=700, corner_radius=20, fg_color="#ff0066", master=app,
+                              border_width=1,
+                              border_color="#ff5e9f")
+        eventFrame.pack(expand=True)
+        eventFrame.place(relx=0.5, rely=0.5, anchor="center")
+        app.mainloop()
 
-event1.addUser("Ahmed", 3)
 
-
-
+print("Bofteka")
 
         
 
