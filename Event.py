@@ -12,6 +12,13 @@ class Event:
         print("Event System Started")
         print("Added Event " + self.Name + ", at location: " + self.Location + ", at " + self.Time)
 
+    def getName(self):
+        return self.Name
+    def getLocation(self):
+        return self.Location
+    def getTime(self):
+        return self.Time
+
     def addUser(self, user, NoTickets):
         for i in range(NoTickets):
             self.UserList.append(user)
