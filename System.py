@@ -80,8 +80,8 @@ class System:
 
 app = CTk()
 app.geometry("1280x720")
-system = System()
 database = Database()
+system = System()
 app.title("Event Ticketing System")
 
 # Event Container data
