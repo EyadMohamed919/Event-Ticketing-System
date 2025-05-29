@@ -69,14 +69,9 @@ class System:
             eventFrame.pack(expand=True)
             eventFrame.place(relx=0.43, rely=self.Ycoordinates, anchor="center")
 
-            evenTitle = CTkLabel(text=event.getName(), master=eventFrame, font=("Brick 3D", 24))
-            evenTitle.place(relx=0.1, rely=0.5, anchor="center")
-
-            evenLocation = CTkLabel(text="Location: " + event.getLocation(), master=eventFrame, font=("Cascadia Code", 19))
-            evenLocation.place(relx=0.3, rely=0.5, anchor="center")
-
-            evenDate = CTkLabel(text="Date: " + event.getTime(), master=eventFrame, font=("Cascadia Code", 19))
-            evenDate.place(relx=0.6, rely=0.5, anchor="center")
+            eventText = f"{event.getName()}\nLocation: {event.getLocation()}\nDate: {event.getTime()}"
+            evenInfo = CTkLabel(text=eventText, master=eventFrame, font=("Cascadia Code", 16), justify="left")
+            evenInfo.place(relx=0.05, rely=0.5, anchor="w")
 
             viewButton = CTkButton(master=eventFrame, width=80, height=40, text="View", corner_radius=32,
                                    fg_color="#4158D0", command=lambda: self.raiseTK(event))
@@ -107,14 +102,9 @@ class System:
             eventFrame.pack(expand=True)
             eventFrame.place(relx=0.43, rely=self.Ycoordinates, anchor="center")
 
-            evenTitle = CTkLabel(text=name.get(), master=eventFrame, font=("Cascadia Code", 24))
-            evenTitle.place(relx=0.1, rely=0.5, anchor="center")
-
-            evenLocation = CTkLabel(text="Location: " + location.get(), master=eventFrame, font=("Cascadia Code", 19))
-            evenLocation.place(relx=0.3, rely=0.5, anchor="center")
-
-            evenDate = CTkLabel(text="Date: " + date.get(), master=eventFrame, font=("Cascadia Code", 19))
-            evenDate.place(relx=0.6, rely=0.5, anchor="center")
+            eventText = f"{event.getName()}\nLocation: {event.getLocation()}\nDate: {event.getTime()}"
+            evenInfo = CTkLabel(text=eventText, master=eventFrame, font=("Cascadia Code", 16), justify="left")
+            evenInfo.place(relx=0.05, rely=0.5, anchor="w")
 
             viewButton = CTkButton(master=eventFrame, width=80, height=40, text="View", corner_radius=32,
                                    fg_color="#4158D0", command=lambda:self.raiseTK(event))

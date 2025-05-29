@@ -1,1 +1,14 @@
-[]
+[
+    {
+        "name": "Kairokee",
+        "location": "Zayed - Palm Hills",
+        "tickets": "1",
+        "time": "10pm-12pm"
+    },
+    {
+        "name": "Amr Diab",
+        "location": "Sahel - Amwag",
+        "tickets": "1",
+        "time": "10pm-12pm"
+    }
+]
