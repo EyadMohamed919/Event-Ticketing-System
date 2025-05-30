@@ -11,7 +11,7 @@ class Profile:
         self.tickets_file = "tickets.json"
         self.data_path = "profile_data.json"
         self.event_data_path = "event_data.json"
-        self.user_profile = self.load_profile()
+        # self.user_profile = self.load_profile()
         self.left_frame = ctk.CTkFrame(self.app, width=250)
         self.left_frame.pack(side="left", fill="y", padx=20, pady=20)
 
@@ -21,10 +21,15 @@ class Profile:
         self.purchased_button = ctk.CTkButton(master=self.left_frame, text="Tickets Purchased", command=self.show_purchased_tickets)
         self.purchased_button.pack(pady=(20, 10))
 
+        self.balanceIndicator = ctk.CTkLabel(self.left_frame, text="Balance:" + str(self.load_profile().get("balance", "")), font=("Arial", 24), text_color="#FF0000")
+        self.balanceIndicator.pack(pady=(20, 10))
+
         self.main_frame = ctk.CTkFrame(self.app)
         self.main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-        ctk.CTkLabel(self.main_frame, text="Available Events", font=("Arial", 24)).pack(pady=10)
+        # ctk.CTkLabel(self.main_frame, text="Available Events", font=("Arial", 24)).pack(pady=10)
+        self.errorLabel = ctk.CTkLabel(self.main_frame, text="", font=("Arial", 24), text_color="#FF0000")
+        self.errorLabel.pack(pady=10)
 
         for event in self.load_events():
             self.event_frame = ctk.CTkFrame(self.main_frame)
@@ -34,6 +39,8 @@ class Profile:
             ctk.CTkLabel(self.event_frame, text=f"Location: {event['location']}", font=("Arial", 14)).pack(side="left",
                                                                                                            padx=10)
             ctk.CTkLabel(self.event_frame, text=f"Time: {event['time']}", font=("Arial", 14)).pack(side="left", padx=10)
+
+            ctk.CTkLabel(self.event_frame, text=f"Ticket Price: {event['price']}", font=("Arial", 14)).pack(side="left", padx=10)
 
             ctk.CTkButton(self.event_frame, text="Purchase", command=lambda e=event: self.purchase_ticket(e)).pack(side="right",
                                                                                                                    padx=10)
@@ -46,7 +53,7 @@ class Profile:
         if os.path.exists(self.data_path):
             with open(self.data_path, "r") as file:
                 return json.load(file)
-        return {"name": "", "age": "", "email": ""}
+        return {"name": "", "age": "", "email": "", "balance":0}
 
     def save_profile(self, data):
         with open(self.data_path, "w") as f:
@@ -70,16 +77,33 @@ class Profile:
             json.dump(tickets, f, indent=4)
 
     def purchase_ticket(self, event):
-        ticket_number = random.randint(1000, 9999)
-        ticket = {
-            "ticket_number": ticket_number,
-            "event_name": event["name"],
-            "location": event["location"],
-            "time": event["time"]
-        }
-        tickets = self.load_tickets()
-        tickets.append(ticket)
-        self.save_tickets(tickets)
+        if int(self.load_profile().get("balance", "")) >= int(event["price"]):
+            self.errorLabel.configure(text="")
+            ticket_number = random.randint(1000, 9999)
+            ticket = {
+                "ticket_number": ticket_number,
+                "event_name": event["name"],
+                "location": event["location"],
+                "time": event["time"]
+            }
+            tickets = self.load_tickets()
+            tickets.append(ticket)
+            self.save_tickets(tickets)
+            self.show_purchased_tickets()
+
+            new_data = {
+                "name": self.load_profile().get("name"),
+                "age": self.load_profile().get("age"),
+                "email": self.load_profile().get("email"),
+                "balance": (int(self.load_profile().get("balance", "")) - int(event["price"]))
+            }
+
+            self.save_profile(new_data)
+            self.balanceIndicator.configure(text="Balance:" + str(self.load_profile().get("balance", "")))
+        else:
+            self.errorLabel.configure(text="Insufficient Funds")
+            print("User doesn't have enough funds")
+
 
     def refund_ticket(self, ticket, parent_frame):
         tickets = self.load_tickets()
@@ -115,31 +139,39 @@ class Profile:
 
         ctk.CTkLabel(win, text="Name:").pack(pady=(10, 0))
         name_entry = ctk.CTkEntry(win)
-        name_entry.insert(0, self.user_profile.get("name", ""))
+        name_entry.insert(0, self.load_profile().get("name", ""))
         name_entry.pack()
 
         ctk.CTkLabel(win, text="Age:").pack(pady=(10, 0))
         age_entry = ctk.CTkEntry(win)
-        age_entry.insert(0, self.user_profile.get("age", ""))
+        age_entry.insert(0, self.load_profile().get("age", ""))
         age_entry.pack()
 
         ctk.CTkLabel(win, text="Email:").pack(pady=(10, 0))
         email_entry = ctk.CTkEntry(win)
-        email_entry.insert(0, self.user_profile.get("email", ""))
+        email_entry.insert(0, self.load_profile().get("email", ""))
         email_entry.pack()
+
+        ctk.CTkLabel(win, text="Balance:").pack(pady=(10, 0))
+        balance_entry = ctk.CTkEntry(win)
+        balance_entry.insert(0, self.load_profile().get("balance", ""))
+        balance_entry.pack()
 
         def save_and_close():
             new_data = {
                 "name": name_entry.get(),
                 "age": age_entry.get(),
-                "email": email_entry.get()
+                "email": email_entry.get(),
+                "balance": balance_entry.get()
             }
             self.save_profile(new_data)
-            global user_profile
-            user_profile = new_data
+            self.balanceIndicator.configure(text="Balance:" + str(self.load_profile().get("balance", "")))
             win.destroy()
 
         ctk.CTkButton(win, text="Save", command=save_and_close).pack(pady=20)
+
+
+
 
 
 Profile()

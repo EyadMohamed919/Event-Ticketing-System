@@ -40,18 +40,23 @@ class System:
                                  width=300)
         self.locationInput.place(relx=0.5, rely=0.4, anchor="center")
 
-        self.ticketsInput = CTkEntry(master=self.formFrame, text_color="#4a6eff",
-                                      placeholder_text="Enter the number of tickets available",
-                                      width=300)
-        self.ticketsInput.place(relx=0.5, rely=0.5, anchor="center")
+
+
+        self.priceInput = CTkEntry(master=self.formFrame, text_color="#4a6eff",
+                                     placeholder_text="Enter the ticket price",
+                                     width=300)
+        self.priceInput.place(relx=0.5, rely=0.5, anchor="center")
 
         self.dateInput = CTkComboBox(master=self.formFrame, text_color="#4a6eff", width=300,
                                 values=["6pm-8pm", "8:30pm-9:30pm", "10pm-12pm"])
         self.dateInput.place(relx=0.5, rely=0.6, anchor="center")
 
+        self.message = CTkLabel(text="", master=self.formFrame, font=("Arial", 20), text_color="#FF0000")
+        self.message.place(relx=0.5, rely=0.1, anchor="center")
+
         self.dontButton = CTkButton(master=self.formFrame, width=100, height=60, text="Done", corner_radius=32,
-                               fg_color="#4158D0", command=lambda: self.addEvent(self.nameInput, self.locationInput, self.dateInput, self.ticketsInput))
-        self.dontButton.place(relx=0.5, rely=0.7, anchor="center")
+                               fg_color="#4158D0", command=lambda: self.addEvent(self.nameInput, self.locationInput, self.dateInput, self.priceInput))
+        self.dontButton.place(relx=0.5, rely=0.8, anchor="center")
 
         self.loadData()
         self.showWindow()
@@ -61,15 +66,15 @@ class System:
 
         for data in allEvents:
             System.currentNoEvents += 1
-            event = Event(data["name"], data["location"], data["time"], data["tickets"])
+            event = Event(data["name"], data["location"], data["time"], data["price"])
             # GUI
-            eventFrame = CTkFrame(width=700, height=100, corner_radius=20, fg_color="#ff0066", master=self.eventContainerFrame,
+            eventFrame = CTkFrame(width=700, height=120, corner_radius=20, fg_color="#ff0066", master=self.eventContainerFrame,
                                   border_width=1,
                                   border_color="#ff5e9f")
             eventFrame.pack(expand=True)
             eventFrame.place(relx=0.43, rely=self.Ycoordinates, anchor="center")
 
-            eventText = f"{event.getName()}\nLocation: {event.getLocation()}\nDate: {event.getTime()}"
+            eventText = f"{event.getName()}\nLocation: {event.getLocation()}\nDate: {event.getTime()}\nTicket Price: {event.getPrice()}"
             evenInfo = CTkLabel(text=eventText, master=eventFrame, font=("Cascadia Code", 16), justify="left")
             evenInfo.place(relx=0.05, rely=0.5, anchor="w")
 
@@ -84,37 +89,42 @@ class System:
 
             self.Ycoordinates += 0.2
 
-    def addEvent(self, name, location, date, ticket):
+    def addEvent(self, name, location, date, price):
         print(System.currentNoEvents)
-        if(System.currentNoEvents < System.MAX_EVENTS):
-            System.currentNoEvents += 1
+        try:
+            price = int(price.get())
+            if (System.currentNoEvents < System.MAX_EVENTS):
+                System.currentNoEvents += 1
 
-            event = Event(name.get(), location.get(), date.get(), ticket.get())
-            self.EventList.append(event)
-            print("Event added to the system")
-            print(self.EventList)
+                event = Event(name.get(), location.get(), date.get(), price)
+                self.EventList.append(event)
+                print("Event added to the system")
+                print(self.EventList)
 
-            self.database.saveEvent(event)
+                self.database.saveEvent(event)
+                self.message.configure(text="")
+                # GUI
+                eventFrame = CTkFrame(width=700, height=120, corner_radius=20, fg_color="#ff0066",
+                                      master=self.eventContainerFrame, border_width=1,
+                                      border_color="#ff5e9f")
+                eventFrame.pack(expand=True)
+                eventFrame.place(relx=0.43, rely=self.Ycoordinates, anchor="center")
 
-            # GUI
-            eventFrame = CTkFrame(width=700, height=100, corner_radius=20, fg_color="#ff0066", master=self.eventContainerFrame, border_width=1,
-                                 border_color="#ff5e9f")
-            eventFrame.pack(expand=True)
-            eventFrame.place(relx=0.43, rely=self.Ycoordinates, anchor="center")
+                eventText = f"{event.getName()}\nLocation: {event.getLocation()}\nDate: {event.getTime()}\nTicket Price: {event.getPrice()}"
+                evenInfo = CTkLabel(text=eventText, master=eventFrame, font=("Cascadia Code", 16), justify="left")
+                evenInfo.place(relx=0.05, rely=0.5, anchor="w")
 
-            eventText = f"{event.getName()}\nLocation: {event.getLocation()}\nDate: {event.getTime()}"
-            evenInfo = CTkLabel(text=eventText, master=eventFrame, font=("Cascadia Code", 16), justify="left")
-            evenInfo.place(relx=0.05, rely=0.5, anchor="w")
+                viewButton = CTkButton(master=eventFrame, width=80, height=40, text="View", corner_radius=32,
+                                       fg_color="#4158D0", command=lambda: self.raiseTK(event))
+                viewButton.place(relx=0.75, rely=0.5, anchor="center")
 
-            viewButton = CTkButton(master=eventFrame, width=80, height=40, text="View", corner_radius=32,
-                                   fg_color="#4158D0", command=lambda:self.raiseTK(event))
-            viewButton.place(relx=0.75, rely=0.5, anchor="center")
-
-            dontButton = CTkButton(master=eventFrame, width=80, height=40, text="Delete", corner_radius=32,
-                                   fg_color="#4158D0",
-                                   command=lambda: self.deleteEvent(event))
-            dontButton.place(relx=0.9, rely=0.5, anchor="center")
-            self.Ycoordinates += 0.2
+                dontButton = CTkButton(master=eventFrame, width=80, height=40, text="Delete", corner_radius=32,
+                                       fg_color="#4158D0",
+                                       command=lambda: self.deleteEvent(event))
+                dontButton.place(relx=0.9, rely=0.5, anchor="center")
+                self.Ycoordinates += 0.2
+        except:
+            self.message.configure(text="Cannot input string in Tickets or Price")
 
     def deleteEvent(self, event):
 
@@ -134,5 +144,5 @@ class System:
     def showWindow(self):
         self.app.mainloop()
 
-system = System()
-system.showWindow()
+# system = System()
+# system.showWindow()

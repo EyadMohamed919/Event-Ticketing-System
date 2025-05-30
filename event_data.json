@@ -2,13 +2,31 @@
     {
         "name": "Kairokee",
         "location": "Zayed - Palm Hills",
-        "tickets": "1",
+        "price": "550",
         "time": "10pm-12pm"
     },
     {
         "name": "Amr Diab",
         "location": "Sahel - Amwag",
-        "tickets": "1",
+        "price": "300",
+        "time": "10pm-12pm"
+    },
+    {
+        "name": "DaftPunk",
+        "location": "Pyramids",
+        "price": 560,
+        "time": "10pm-12pm"
+    },
+    {
+        "name": "Tamer Hosny",
+        "location": "Alex",
+        "price": 15,
+        "time": "10pm-12pm"
+    },
+    {
+        "name": "Hamaky",
+        "location": "Giza",
+        "price": 210,
         "time": "10pm-12pm"
     }
 ]

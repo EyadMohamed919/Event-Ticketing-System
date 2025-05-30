@@ -1,11 +1,11 @@
 from customtkinter import *
 
 class Event:
-    def __init__(self, Name, Location, Time, AvailableTickets):
+    def __init__(self, Name, Location, Time, Price):
         self.Name = Name
         self.Location = Location
         self.Time = Time
-        self.AvailableTickets = AvailableTickets
+        self.__Price = Price
         self.UserList = []
         print("Event System Started")
         print(f"Added Event {self.Name}, at location: {self.Location}, at {self.Time}")
@@ -13,13 +13,15 @@ class Event:
     def getName(self):
         return self.Name
 
+    def getPrice(self):
+        return self.__Price
+
     def getLocation(self):
         return self.Location
 
     def getTime(self):
         return self.Time
-    def getAvailableTickets(self):
-        return self.AvailableTickets
+
 
     def addUser(self, user, NoTickets):
         for i in range(NoTickets):

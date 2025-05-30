@@ -6,7 +6,7 @@ class Database:
         event = {
             "name": event.getName(),
             "location": event.getLocation(),
-            "tickets": event.getAvailableTickets(),
+            "price": event.getPrice(),
             "time": event.getTime()
         }
         loaded_data.append(event)
@@ -29,7 +29,7 @@ class Database:
         print(event)
         for i in range(len(old_loaded_data)):
             if old_loaded_data[i]["name"] != event["name"]:
-                dataToBeSave.append(i)
+                dataToBeSave.append(old_loaded_data[i])
 
         with open("event_data.json", "w") as file:
             json.dump(dataToBeSave, file, indent=4)
